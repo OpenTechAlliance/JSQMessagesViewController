@@ -115,6 +115,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
 @property (nonatomic) NSLayoutConstraint *toolbarHeightConstraint;
 
+@property (nonatomic) CGFloat jsq_collectionViewFrameWidth;
+
 @property (strong, nonatomic) NSIndexPath *selectedIndexPathForMenu;
 
 @end
@@ -230,6 +232,8 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
     [super viewDidLoad];
 
     [[[self class] nib] instantiateWithOwner:self options:nil];
+    
+    self.jsq_collectionViewFrameWidth = CGRectGetWidth(self.collectionView.frame);
 
     [self jsq_configureMessagesViewController];
     [self jsq_registerForNotifications:YES];
@@ -266,6 +270,12 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [self jsq_resetLayoutAndCaches];
 }
 
 #pragma mark - View rotation
@@ -311,9 +321,14 @@ static void JSQInstallWorkaroundForSheetPresentationIssue26295020(void) {
 
 - (void)jsq_resetLayoutAndCaches
 {
-    JSQMessagesCollectionViewFlowLayoutInvalidationContext *context = [JSQMessagesCollectionViewFlowLayoutInvalidationContext context];
-    context.invalidateFlowLayoutMessagesCache = YES;
-    [self.collectionView.collectionViewLayout invalidateLayoutWithContext:context];
+    if (CGRectGetWidth(self.collectionView.frame) != self.jsq_collectionViewFrameWidth) {
+        self.jsq_collectionViewFrameWidth = CGRectGetWidth(self.collectionView.frame);
+        
+        // invalidate layout
+        JSQMessagesCollectionViewFlowLayoutInvalidationContext *context = [JSQMessagesCollectionViewFlowLayoutInvalidationContext context];
+        context.invalidateFlowLayoutMessagesCache = YES;
+        [self.collectionView.collectionViewLayout invalidateLayoutWithContext:context];
+    }
 }
 
 #pragma mark - Messages view controller
