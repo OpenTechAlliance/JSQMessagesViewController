@@ -188,6 +188,10 @@
 
 #pragma mark - UITextView overrides
 
+- (CGRect)caretRectForPosition:(UITextPosition*)position
+{
+    return [self inputView] ? CGRectZero : [super caretRectForPosition:position];
+}
 
 - (void)setBounds:(CGRect)bounds
 {
