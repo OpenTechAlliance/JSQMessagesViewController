@@ -72,7 +72,7 @@
     cache.name = @"JSQMessagesBubblesSizeCalculator.cache";
     cache.countLimit = 200;
     return [self initWithCache:cache
-            minimumBubbleWidth:0
+            minimumBubbleWidth:1
          usesFixedWidthBubbles:NO];
 }
 
