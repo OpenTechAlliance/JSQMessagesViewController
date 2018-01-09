@@ -72,7 +72,7 @@
     cache.name = @"JSQMessagesBubblesSizeCalculator.cache";
     cache.countLimit = 200;
     return [self initWithCache:cache
-            minimumBubbleWidth:1
+            minimumBubbleWidth:[UIImage jsq_bubbleCompactImage].size.width
          usesFixedWidthBubbles:NO];
 }
 
@@ -89,6 +89,11 @@
 - (void)prepareForResettingLayout:(JSQMessagesCollectionViewFlowLayout *)layout
 {
     [self.cache removeAllObjects];
+}
+
+- (void)resetBubbleSizeCacheForMessageData:(id<JSQMessageData>)messageData
+{
+    [self.cache removeObjectForKey:@([messageData messageHash])];
 }
 
 - (CGSize)messageBubbleSizeForMessageData:(id<JSQMessageData>)messageData
