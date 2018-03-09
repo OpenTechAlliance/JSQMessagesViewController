@@ -269,6 +269,8 @@ JSQMessagesKeyboardControllerDelegate>
 
     [self jsq_configureMessagesViewController];
     [self jsq_registerForNotifications:YES];
+    [self jsq_addObservers];
+    [self.keyboardController beginListeningForKeyboard];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -277,7 +279,11 @@ JSQMessagesKeyboardControllerDelegate>
     NSParameterAssert(self.senderDisplayName != nil);
 
     [super viewWillAppear:animated];
-    self.toolbarHeightConstraint.constant = self.inputToolbar.preferredDefaultHeight;
+    
+    if (!self.inputToolbar.contentView.textView.hasText) {
+        self.toolbarHeightConstraint.constant = self.inputToolbar.preferredDefaultHeight;
+    }
+
     [self.view layoutIfNeeded];
     [self.collectionView.collectionViewLayout invalidateLayout];
 
@@ -294,9 +300,7 @@ JSQMessagesKeyboardControllerDelegate>
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self jsq_addObservers];
     [self jsq_addActionToInteractivePopGestureRecognizer:YES];
-    [self.keyboardController beginListeningForKeyboard];
 
     if ([UIDevice jsq_isCurrentDeviceBeforeiOS8]) {
         [self.snapshotView removeFromSuperview];
@@ -313,8 +317,6 @@ JSQMessagesKeyboardControllerDelegate>
 {
     [super viewDidDisappear:animated];
     [self jsq_addActionToInteractivePopGestureRecognizer:NO];
-    [self jsq_removeObservers];
-    [self.keyboardController endListeningForKeyboard];
 }
 
 

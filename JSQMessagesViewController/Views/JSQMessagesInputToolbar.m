@@ -119,6 +119,13 @@ static void * kJSQMessagesInputToolbarKeyValueObservingContext = &kJSQMessagesIn
     }
 }
 
+#pragma mark - Notifications
+
+- (void)textViewTextDidChangeNotification:(NSNotification *)notification
+{
+    [self toggleSendButtonEnabled];
+}
+
 #pragma mark - Key-value observing
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -167,6 +174,12 @@ static void * kJSQMessagesInputToolbarKeyValueObservingContext = &kJSQMessagesIn
                        forKeyPath:NSStringFromSelector(@selector(rightBarButtonItem))
                           options:0
                           context:kJSQMessagesInputToolbarKeyValueObservingContext];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textViewTextDidChangeNotification:)
+                                                 name:UITextViewTextDidChangeNotification
+                                               object:_contentView.textView];
+
 
     self.jsq_isObserving = YES;
 }
@@ -185,6 +198,8 @@ static void * kJSQMessagesInputToolbarKeyValueObservingContext = &kJSQMessagesIn
         [_contentView removeObserver:self
                           forKeyPath:NSStringFromSelector(@selector(rightBarButtonItem))
                              context:kJSQMessagesInputToolbarKeyValueObservingContext];
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidChangeNotification object:_contentView.textView];
     }
     @catch (NSException *__unused exception) { }
     

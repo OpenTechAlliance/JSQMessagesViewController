@@ -90,7 +90,13 @@
 
 - (BOOL)hasText
 {
-    return ([[self.text jsq_stringByTrimingWhitespace] length] > 0);
+    __block BOOL containsTextAttachment = false;
+    [[self attributedText] enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, self.attributedText.length) options:0 usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+        containsTextAttachment = true;
+        *stop = true;
+    }];
+    
+    return containsTextAttachment || ([[self.text jsq_stringByTrimingWhitespace] length] > 0);
 }
 
 #pragma mark - Setters
@@ -116,6 +122,11 @@
 }
 
 #pragma mark - UITextView overrides
+
+- (CGRect)caretRectForPosition:(UITextPosition*)position
+{
+    return [self inputView] ? CGRectZero : [super caretRectForPosition:position];
+}
 
 - (void)setText:(NSString *)text
 {
