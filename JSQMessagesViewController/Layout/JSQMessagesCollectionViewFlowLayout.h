@@ -210,4 +210,6 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesCollectionViewAvatarSizeDefault;
  */
 - (CGSize)sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
 
+- (void)jsq_resetLayout;
+
 @end
